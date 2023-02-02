@@ -3,9 +3,15 @@
 #include "fstream"
 
 int main() {
-//    std::fstream a("tapes/a", std::fstream::out);
     Tape<int> tape;
-    tape.Write(12);
-//    tape.Write(7);
+    tape.Write(103);
+    std::cout << tape.Read();
+    tape.Move(1);
+    tape.Write(7);
+    std::cout << tape.Read();
+    tape.Move(-1);
+    tape.Write(7);
+    std::cout << tape.Read();
+
     return 0;
 }

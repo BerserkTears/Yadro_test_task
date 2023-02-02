@@ -1,7 +1,3 @@
-//
-// Created by Кирилл Куницын on 28.01.2023.
-//
-
 #ifndef YADRO_TEST_TASK_TAPE_H
 #define YADRO_TEST_TASK_TAPE_H
 
@@ -28,7 +24,7 @@ private:
     int moveDelay{};
     int moveNextDelay{};
 
-    [[maybe_unused]] void wait(int time);
+    void Wait(int time);
 public:
     explicit Tape();
 
@@ -43,7 +39,7 @@ public:
     T Read();
 };
 
-template<typename T> void Tape<T>::wait(int time) {
+template<typename T> void Tape<T>::Wait(int time) {
     sleep(time);
 }
 
@@ -82,6 +78,10 @@ template<typename T> Tape<T>::Tape(){
     file.open(fileName, std::fstream::in | std::fstream::out);
     if (file.fail()){
         file.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+        for (int i = 0; i < size - 1; ++i) {
+            file << "            \r\n";
+        }
+        file << "            ";
     }
     current = 0;
 }
@@ -126,18 +126,13 @@ template<typename T> void Tape<T>::SetConfig(){
 
 template<typename T> void Tape<T>::Write(T information){
     file.seekg(0);
-    T tmp;
+    std::string tmp;
     for (int i = 0; i < current; ++i) {
-        file >> tmp;
+        std::getline(file,tmp);
     }
-    file.peek();
     file.seekp(file.tellg());
-    char tmp2;
-    while (tmp2 != ' ' && !(file.eof())){
-        file << "";
-        file.get(tmp2);
-    }
-    file << information;
+    file << information << " ";
+    Wait(writeDelay);
 }
 
 template<typename T> void Tape<T>::Move(int steps){
@@ -146,9 +141,22 @@ template<typename T> void Tape<T>::Move(int steps){
         throw std::out_of_range("Out of range of Tape");
     if (current < 0)
         throw std::out_of_range("Out of range of Tape");
+    if (steps == 1 || steps == -1)
+        Wait(moveNextDelay);
+    else
+        Wait(moveDelay);
 }
 
 template<typename T> T Tape<T>::Read(){
+    file.seekg(0);
+    std::string tmp;
+    for (int i = 0; i < current; ++i) {
+        std::getline(file,tmp);
+    }
+    T output;
+    file >> output;
+    Wait(readDelay);
+    return output;
 }
 
 

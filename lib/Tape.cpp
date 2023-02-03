@@ -9,30 +9,11 @@ void Tape::Wait(int time) {
     sleep(time);
 }
 
-Tape::Tape(){
-    config.open("config.txt", std::fstream::in);
+Tape::Tape(std::string configName){
+    configName.insert(0,"cfg/");
+    config.open(configName, std::fstream::in);
     if(config.fail()){
-        config.open("config.txt", std::fstream::out | std::fstream::trunc);
-        std::cout << "Write file name" << std::endl;
-        std::cin >> fileName;
-        config << fileName.insert(0,"tapes/") << " ";
-        std::cout << "Write tape size"<< std::endl;
-        std::cin >> size;
-        config << size << " ";
-        std::cout << "Write read delay"<< std::endl;
-        std::cin >> readDelay;
-        config << readDelay << " ";
-        std::cout << "Write write delay"<< std::endl;
-        std::cin >> writeDelay;
-        config << writeDelay << " ";
-        std::cout << "Write Move delay"<< std::endl;
-        std::cin >> moveDelay;
-        config << moveDelay << " ";
-        std::cout << "Write Move to next delay"<< std::endl;
-        std::cin >> moveNextDelay;
-        config << moveNextDelay << " ";
-        std::filesystem::create_directory("tmp");
-        std::filesystem::create_directory("tapes");
+        throw std::invalid_argument("No such file");
     } else {
         config >> fileName;
         config >> size;
@@ -52,44 +33,86 @@ Tape::Tape(){
     current = 0;
 }
 
+Tape::Tape(std::string configN, std::string fileN, size_t size1, int readD, int writeD, int moveD, int moveNextD){
+    configN.insert(0,"cfg/");
+    std::filesystem::create_directory("cfg");
+    fileN.insert(0,"tapes/");
+    config.open(configN, std::fstream::out | std::fstream::trunc);
+    fileName = fileN;
+    config << fileName << " ";
+    size = size1;
+    config << size << " ";
+    readDelay = readD;
+    config << readDelay << " ";
+    writeDelay = writeD;
+    config << writeDelay << " ";
+    moveDelay = moveD;
+    config << moveDelay << " ";
+    moveNextDelay = moveNextD;
+    config << moveNextDelay << " ";
+    std::filesystem::create_directory("tmp");
+    std::filesystem::create_directory("tapes");
+    file.open(fileName, std::fstream::in | std::fstream::out);
+    if (file.fail()){
+        file.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+        for (int i = 0; i < size - 1; ++i) {
+            file << "            \r\n";
+        }
+        file << "            ";
+    }
+    current = 0;
+}
+
 Tape::~Tape(){
     config.close();
     file.close();
 }
 
-void Tape::SetConfig(){
-    config.open("config.txt", std::fstream::out | std::fstream::trunc);
-    config.clear();
-    std::cout << "Current file name: " << fileName << std::endl;
-    std::cout << "Write file name" << std::endl;
-    std::cin >> fileName;
-    config << fileName << " ";
-    std::cout << "Current tape size: " << size << std::endl;
-    std::cout << "Write tape size"<< std::endl;
-    std::cin >> size;
-    config << size << " ";
-    std::cout << "Current read delay: " << readDelay << std::endl;
-    std::cout << "Write read delay"<< std::endl;
-    std::cin >> readDelay;
-    config << readDelay << " ";
-    std::cout << "Current write delay: " << writeDelay << std::endl;
-    std::cout << "Write write delay"<< std::endl;
-    std::cin >> writeDelay;
-    config << writeDelay << " ";
-    std::cout << "Current Move delay: " << moveDelay << std::endl;
-    std::cout << "Write Move delay"<< std::endl;
-    std::cin >> moveDelay;
-    config << moveDelay << " ";
-    std::cout << "Current Move to next delay: " << moveNextDelay << std::endl;
-    std::cout << "Write Move to next delay"<< std::endl;
-    std::cin >> moveNextDelay;
-    config << moveNextDelay << " ";
+void Tape::SetConfig(std::string configName){
+    configName.insert(0,"cfg/");
+    config.open(configName, std::fstream::in);
+    if(config.fail()){
+        throw std::invalid_argument("No such file");
+    } else {
+        config >> fileName;
+        config >> size;
+        config >> readDelay;
+        config >> writeDelay;
+        config >> moveDelay;
+        config >> moveNextDelay;
+    }
     file.open(fileName, std::fstream::in | std::fstream::out);
     if (file.fail()){
         file.open(fileName, std::fstream::in | std::fstream::out | std::fstream::trunc);
+        for (int i = 0; i < size - 1; ++i) {
+            file << "            \r\n";
+        }
+        file << "            ";
     }
+    current = 0;
 }
 
+void Tape::SetConfig(std::string configN, std::string fileN, size_t size1, int readD, int writeD, int moveD, int moveNextD){
+    configN.insert(0,"cfg/");
+    std::filesystem::create_directory("cfg");
+    fileN.insert(0,"tapes/");
+    config.open(configN, std::fstream::out | std::fstream::trunc);
+    fileName = fileN;
+    config << fileName << " ";
+    size = size1;
+    config << size << " ";
+    readDelay = readD;
+    config << readDelay << " ";
+    writeDelay = writeD;
+    config << writeDelay << " ";
+    moveDelay = moveD;
+    config << moveDelay << " ";
+    moveNextDelay = moveNextD;
+    config << moveNextDelay << " ";
+    std::filesystem::create_directory("tmp");
+    std::filesystem::create_directory("tapes");
+    current = 0;
+}
 void Tape::Write(int information){
     file.seekg(0);
     std::string tmp;

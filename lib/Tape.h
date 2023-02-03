@@ -5,7 +5,6 @@
 
 #include "stdexcept"
 #include "fstream"
-#include "iostream"
 #include "cstdlib"
 #include <filesystem>
 
@@ -23,13 +22,17 @@ private:
     int moveDelay{};
     int moveNextDelay{};
 
-    void Wait(int time);
+    static void Wait(int time);
 public:
-    explicit Tape();
+    explicit Tape(std::string configName);
+
+    Tape(std::string configN, std::string fileN, size_t size1, int readD, int writeD, int moveD, int moveNextD);
 
     ~Tape();
 
-    void SetConfig();
+    void SetConfig(std::string configName);
+
+    void SetConfig(std::string configN, std::string fileN, size_t size1, int readD, int writeD, int moveD, int moveNextD);
 
     void Write(int information);
 

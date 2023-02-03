@@ -18,6 +18,16 @@ private:
     size_t current;
     std::string fileName;
     int readDelay{};
+public:
+    int getReadDelay() const;
+
+    int getWriteDelay() const;
+
+    int getMoveDelay() const;
+
+    int getMoveNextDelay() const;
+
+private:
     int writeDelay{};
     int moveDelay{};
     int moveNextDelay{};
@@ -39,6 +49,8 @@ public:
     void Move(int steps);
 
     int Read();
+
+    size_t GetSize() const;
 };
 
 

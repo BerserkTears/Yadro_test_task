@@ -9,6 +9,8 @@ void Tape::Wait(int time) {
     sleep(time);
 }
 
+
+
 Tape::Tape(std::string configName){
     configName.insert(0,"cfg/");
     config.open(configName, std::fstream::in);
@@ -146,4 +148,24 @@ int Tape::Read(){
     file >> output;
     Wait(readDelay);
     return output;
+}
+
+size_t Tape::GetSize() const {
+    return size;
+}
+
+int Tape::getReadDelay() const {
+    return readDelay;
+}
+
+int Tape::getWriteDelay() const {
+    return writeDelay;
+}
+
+int Tape::getMoveDelay() const {
+    return moveDelay;
+}
+
+int Tape::getMoveNextDelay() const {
+    return moveNextDelay;
 }

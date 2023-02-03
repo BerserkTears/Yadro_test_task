@@ -1,9 +1,8 @@
 #include <iostream>
 #include "Tape.h"
-#include "fstream"
 
 int main() {
-    Tape<int> tape;
+    Tape tape;
     tape.Write(103);
     std::cout << tape.Read();
     tape.Move(1);
